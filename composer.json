@@ -11,6 +11,7 @@
         "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
@@ -54,6 +55,12 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "rector": [
+            "vendor/bin/rector"
+        ],
+        "rector-dry-run": [
+            "vendor/bin/rector process --dry-run --ansi"
         ]
     },
     "extra": {

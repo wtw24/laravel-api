@@ -1,0 +1,29 @@
+name: Rector
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  rector:
+    name: Run Rector Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🧰 Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, xml
+          coverage: none
+
+      - name: 📦 Install Composer dependencies
+        run: composer install --no-progress --prefer-dist
+
+      - name: 🔍 Run Rector in dry-run mode
+        run: vendor/bin/rector process --dry-run --ansi
