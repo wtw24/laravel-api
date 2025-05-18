@@ -22,8 +22,30 @@ jobs:
           extensions: mbstring, pdo, xml
           coverage: none
 
+      - name: 💾 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
       - name: 📦 Install Composer dependencies
         run: composer install --no-progress --prefer-dist
 
       - name: 🔍 Run Rector in dry-run mode
+        id: rector
         run: vendor/bin/rector process --dry-run --ansi
+        continue-on-error: true
+
+      - name: 📣 Post Rector result to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2.7.0
+        with:
+          header: rector
+          message: |
+            ⚠️ **Rector detected code that could be refactored.**
+            Please review the suggested changes and run Rector locally:
+            ```bash
+            vendor/bin/rector process
+            ```
