@@ -13,17 +13,20 @@ jobs:
 
     services:
       mariadb:
-        image: mariadb:11.3
+        image: mariadb:11
         env:
           MARIADB_DATABASE: test_db
+          MARIADB_USER: db_usr
+          MARIADB_PASSWORD: db_pass
           MARIADB_ROOT_PASSWORD: root
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot || exit 1"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
       - name: 📥 Checkout code
@@ -49,7 +52,7 @@ jobs:
 
       - name: ⚙️ Prepare Laravel environment
         run: |
-          cp .env.example .env
+          cp .env.testing .env
           php artisan key:generate
 
       - name: ⏳ Wait for MariaDB
