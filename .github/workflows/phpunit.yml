@@ -22,10 +22,11 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot || exit 1"
+          --health-cmd="healthcheck.sh --connect"
+          --health-start-period=10s
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=5
 
     steps:
       - name: 📥 Checkout code
@@ -60,6 +61,12 @@ jobs:
             echo "Waiting for database..."
             sleep 2
           done
+
+      - name: Create healthcheck script
+        run: |
+          echo '#!/bin/bash
+          mysqladmin ping -h localhost -uroot -proot || exit 1' > healthcheck.sh
+          chmod +x healthcheck.sh
 
       - name: 🧪 Run PHPUnit tests
         run: vendor/bin/phpunit --testsuite=Unit
