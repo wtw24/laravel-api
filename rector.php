@@ -10,12 +10,12 @@ use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/app',
-        __DIR__ . '/bootstrap',
-        __DIR__ . '/config',
-        __DIR__ . '/public',
-        __DIR__ . '/routes',
-        __DIR__ . '/tests',
+        __DIR__.'/app',
+        __DIR__.'/bootstrap',
+        __DIR__.'/config',
+        __DIR__.'/public',
+        __DIR__.'/routes',
+        __DIR__.'/tests',
     ])
     ->withTypeCoverageLevel(47)
     ->withDeadCodeLevel(44)
@@ -28,10 +28,8 @@ return RectorConfig::configure()
     ->withSkip([
         StaticCallOnNonStaticToInstanceCallRector::class,
         FirstClassCallableRector::class,
-        __DIR__ . '/bootstrap/cache',
+        __DIR__.'/bootstrap/cache',
     ])
     ->withPhpSets(
         php84: true
     );
-
-

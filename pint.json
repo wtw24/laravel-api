@@ -1,0 +1,18 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "combine_consecutive_issets": true,
+        "combine_consecutive_unsets": true,
+        "concat_space": true,
+        "declare_strict_types": true,
+        "numeric_literal_separator": true,
+        "fully_qualified_strict_types": true,
+        "php_unit_method_casing": {
+            "case": "camel_case"
+        }
+    },
+    "exclude": [
+        "vendor",
+        "storage"
+    ]
+}

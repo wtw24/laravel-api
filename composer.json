@@ -15,7 +15,7 @@
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
-        "laravel/pint": "^1.13",
+        "laravel/pint": "^1.22",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
@@ -59,13 +59,10 @@
             "@php-default artisan config:clear --ansi",
             "@php-default artisan test"
         ],
-        "rector": [
-            "@php-default vendor/bin/rector"
-        ],
-        "rector-dry-run": [
-            "@php-default vendor/bin/rector process --dry-run --ansi"
-        ],
-        "phpstan": "@php-default vendor/bin/phpstan analyse --memory-limit=-1"
+        "rector": "@php-default vendor/bin/rector process",
+        "rector-dry-run": "@php-default vendor/bin/rector process --dry-run --ansi",
+        "phpstan": "@php-default vendor/bin/phpstan analyse --memory-limit=-1",
+        "pint": "@php-default vendor/bin/pint"
     },
     "extra": {
         "laravel": {

@@ -1,0 +1,51 @@
+name: Laravel Pint Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pint:
+    name: Run Laravel Pint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🧰 Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: 💾 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: 📦 Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+      - name: 🔍 Run Laravel Pint (dry-run)
+        id: pint
+        run: |
+          vendor/bin/pint --test --verbose
+        continue-on-error: true
+
+      - name: 📣 Notify PR with Pint result
+        if: steps.pint.outcome == 'failure' && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pint
+          message: |
+            ❌ **Laravel Pint found formatting issues.**
+            Please run `vendor/bin/pint` locally to fix them automatically.
