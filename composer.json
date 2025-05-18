@@ -13,12 +13,14 @@
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^11.5.3",
+        "spaze/phpstan-disallowed-calls": "^4.5"
     },
     "autoload": {
         "psr-4": {
@@ -33,35 +35,37 @@
         }
     },
     "scripts": {
+        "php-default": "@php -d \"xdebug.mode=off\" -d \"pcov.enabled=0\"",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php-default artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php-default artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "@php-default -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
-            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi"
+            "@php-default artisan key:generate --ansi",
+            "@php-default -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php-default artisan migrate --graceful --ansi"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ],
         "test": [
-            "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "@php-default artisan config:clear --ansi",
+            "@php-default artisan test"
         ],
         "rector": [
-            "vendor/bin/rector"
+            "@php-default vendor/bin/rector"
         ],
         "rector-dry-run": [
-            "vendor/bin/rector process --dry-run --ansi"
-        ]
+            "@php-default vendor/bin/rector process --dry-run --ansi"
+        ],
+        "phpstan": "@php-default vendor/bin/phpstan analyse --memory-limit=-1"
     },
     "extra": {
         "laravel": {

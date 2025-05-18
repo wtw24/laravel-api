@@ -1,0 +1,71 @@
+includes:
+    # Laravel-specific PHPStan extensions
+    - vendor/larastan/larastan/extension.neon
+
+    # Carbon date/time type support
+    - vendor/nesbot/carbon/extension.neon
+
+    # Spaze disallowed-calls to detect dangerous or insecure function usage
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+
+    # Future rules that may become default in the next PHPStan versions
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+    # Analyze all core Laravel app code
+    paths:
+        - app/
+        - routes/
+        - config/
+        - database/
+
+    # Exclude test files from static analysis
+    excludePaths:
+        - tests/
+        - bootstrap/cache/*
+        - storage/*
+
+    # Maximal strictness (0–10)
+    level: 10
+
+    # Prevent trusting phpDoc types completely
+    treatPhpDocTypesAsCertain: false
+
+    # Enable link support for PhpStorm to navigate to errors
+    editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+
+    # Enable strict checking for Laravel Eloquent and Collection internals
+    checkExplicitMixed: true
+    checkUninitializedProperties: true
+
+    # Report unused @var, @param, @return annotations
+    reportUnmatchedIgnoredErrors: true
+
+    # Disallow dangerous or undesired function usage
+    disallowedFunctionCalls:
+        -
+            function:
+                - 'ini_set()'
+            message: 'Changing PHP settings at runtime is disallowed. Ask DevOps for help.'
+        -
+            function:
+                - 'set_time_limit()'
+            message: 'Changing execution time is not allowed.'
+        -
+            function:
+                - 'dd()'
+                - 'ddd()'
+                - 'dump()'
+            message: 'Use logging instead of dump/debug functions.'
+
+    # Disallow static-style debugging methods on any class
+    disallowedMethodCalls:
+        -
+            method:
+                - '*::dd()'
+                - '*::dump()'
+            message: 'Use logging instead of dump/debug methods.'
