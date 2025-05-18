@@ -12,6 +12,7 @@
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
+        "ergebnis/phpunit-slow-test-detector": "^2.19",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
@@ -20,7 +21,8 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^11.5.3",
-        "spaze/phpstan-disallowed-calls": "^4.5"
+        "spaze/phpstan-disallowed-calls": "^4.5",
+        "ta-tikoma/phpunit-architecture-test": "^0.8.5"
     },
     "autoload": {
         "psr-4": {
@@ -55,10 +57,7 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ],
-        "test": [
-            "@php-default artisan config:clear --ansi",
-            "@php-default artisan test"
-        ],
+        "test": "@php-default vendor/bin/phpunit",
         "rector": "@php-default vendor/bin/rector process",
         "rector-dry-run": "@php-default vendor/bin/rector process --dry-run --ansi",
         "phpstan": "@php-default vendor/bin/phpstan analyse --memory-limit=-1",

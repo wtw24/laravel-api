@@ -1,0 +1,63 @@
+name: PHPUnit Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run PHPUnit
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_DATABASE: test_db
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mariadb-admin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup PHP with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_mysql
+          coverage: none
+
+      - name: 💾 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: 📦 Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: ⚙️ Prepare Laravel environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: ⏳ Wait for MariaDB
+        run: |
+          until mariadb-admin ping -h 127.0.0.1 -uroot -proot --silent; do
+            echo "Waiting for database..."
+            sleep 2
+          done
+
+      - name: 🧪 Run PHPUnit tests
+        run: vendor/bin/phpunit --testsuite=Unit
