@@ -28,6 +28,10 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    strategy:
+      matrix:
+        suite: [ Architecture, Unit, Feature ]
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -68,5 +72,5 @@ jobs:
           mysqladmin ping -h localhost -uroot -proot || exit 1' > healthcheck.sh
           chmod +x healthcheck.sh
 
-      - name: 🧪 Run PHPUnit tests
-        run: vendor/bin/phpunit --testsuite=Unit
+      - name: 🧪 Run PHPUnit ${{ matrix.suite }} Tests
+        run: vendor/bin/phpunit --testdox --testdox-summary --testsuite=${{ matrix.suite }}
